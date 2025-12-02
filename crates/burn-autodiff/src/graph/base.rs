@@ -14,4 +14,5 @@ pub trait Step: Send + core::fmt::Debug {
     fn parents(&self) -> &[Parent];
 }
 
+/// Boxed step for dynamic dispatch.
 pub type StepBoxed = Box<dyn Step>;

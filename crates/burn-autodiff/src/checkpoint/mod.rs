@@ -1,6 +1,7 @@
 /// Checkpointer module
 pub mod base;
-pub(crate) mod builder;
+/// Checkpoint builder module
+pub mod builder;
 /// RetroForward module
 pub mod retro_forward;
 /// BackwardStates module

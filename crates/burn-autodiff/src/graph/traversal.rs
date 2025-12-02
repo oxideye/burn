@@ -9,9 +9,13 @@ use alloc::vec::Vec;
 /// Breadth for search algorithm.
 pub struct BreadthFirstSearch;
 
+/// Trait for items that can be traversed in the computation graph.
 pub trait TraversalItem {
+    /// Returns the node ID of this item.
     fn id(&self) -> NodeId;
+    /// Returns the parent references of this item.
     fn parents(&self) -> &[Parent];
+    /// Returns the node IDs of all parents.
     fn parent_nodes(&self) -> Vec<NodeId> {
         self.parents().iter().map(|p| p.id).collect()
     }

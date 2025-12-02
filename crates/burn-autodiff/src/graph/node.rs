@@ -10,13 +10,20 @@ use crate::runtime::AutodiffClientImpl;
 
 use super::Requirement;
 
+/// Property describing the computational characteristics of an operation.
+///
+/// Used to determine checkpointing strategy during backward pass.
 #[derive(Debug, Clone)]
 pub enum ComputingProperty {
+    /// The operation is compute-bound (expensive to recompute).
     ComputeBound,
+    /// The operation is memory-bound and can be efficiently recomputed.
     MemoryBound {
+        /// The function to recompute the forward pass.
         retro_forward: Arc<dyn RetroForward>,
     },
-    Ambiguous, // Maybe autotune someday
+    /// The operation's characteristics are unknown or mixed.
+    Ambiguous,
 }
 
 /// This is safe only because we only call RetroForward on the autodiff server.
@@ -31,17 +38,26 @@ unsafe impl Sync for ComputingProperty {}
 /// A node contains graph metadata and should be used wrapped in an Arc for cheap cloning.
 #[derive(new, Debug)]
 pub struct Node {
+    /// The parent nodes in the computation graph.
     pub parents: Vec<Parent>,
+    /// The topological order (depth) of this node in the graph.
     pub order: usize,
+    /// The unique identifier for this node.
     pub id: NodeId,
+    /// The gradient requirement for this node.
     pub requirement: Requirement,
+    /// The computing property determining checkpointing behavior.
     pub properties: ComputingProperty,
+    /// The autodiff client for registering operations.
     pub client: AutodiffClientImpl,
 }
+/// Reference-counted pointer to a Node.
 pub type NodeRef = Arc<Node>;
 
+/// A parent reference in the computation graph.
 #[derive(new, Debug, Clone, PartialEq, Eq)]
 pub struct Parent {
+    /// The node ID of the parent.
     pub id: NodeId,
 }
 

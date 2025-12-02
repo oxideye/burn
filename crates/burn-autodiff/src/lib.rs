@@ -21,10 +21,18 @@ pub mod grads;
 /// Operation module.
 pub mod ops;
 
-pub(crate) mod graph;
+/// Graph module containing types for the autodiff computation graph.
+///
+/// This module exposes types needed for implementing custom `Step` nodes
+/// for advanced use cases like gradient checkpointing.
+pub mod graph;
 // Exported for backend extension
 pub use graph::NodeId;
-pub(crate) mod tensor;
+/// Tensor module containing the `AutodiffTensor` type.
+///
+/// This module exposes the autodiff tensor wrapper for implementing
+/// custom backward pass operations.
+pub mod tensor;
 pub(crate) mod utils;
 
 mod backend;

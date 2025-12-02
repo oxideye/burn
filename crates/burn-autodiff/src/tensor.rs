@@ -7,10 +7,17 @@ use crate::{
 use alloc::{boxed::Box, sync::Arc, vec};
 use burn_tensor::{TensorMetadata, backend::Backend};
 
+/// A tensor that tracks operations for automatic differentiation.
+///
+/// This struct wraps a backend's primitive tensor and associates it with
+/// a node in the computation graph for gradient computation.
 #[derive(Debug, Clone)]
 pub struct AutodiffTensor<B: Backend> {
+    /// The underlying tensor primitive.
     pub primitive: B::FloatTensorPrimitive,
+    /// The node in the computation graph.
     pub node: NodeRef,
+    /// Reference count for tracking tensor lifetime.
     pub rc: NodeRefCount,
 }
 
@@ -28,6 +35,7 @@ impl<B: Backend> TensorMetadata for AutodiffTensor<B> {
     }
 }
 
+/// Reference-counted node ID for tracking tensor lifetime.
 pub type NodeRefCount = Arc<NodeId>;
 
 #[derive(new, Debug)]
@@ -74,6 +82,7 @@ impl<B: Backend> AutodiffTensor<B> {
         }
     }
 
+    /// Returns true if this tensor is tracking gradients.
     pub fn is_tracked(&self) -> bool {
         !self.node.requirement.is_none()
     }
@@ -164,7 +173,15 @@ impl<B: Backend> AutodiffTensor<B> {
         self
     }
 
+    /// Consume the tensor and return the underlying primitive.
     pub fn into_primitive(self) -> B::FloatTensorPrimitive {
         self.primitive
+    }
+
+    /// Get the NodeRef for this tensor.
+    ///
+    /// This is useful for implementing custom checkpointing strategies.
+    pub fn node_ref(&self) -> NodeRef {
+        self.node.clone()
     }
 }

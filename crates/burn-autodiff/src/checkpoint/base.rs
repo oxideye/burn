@@ -9,13 +9,14 @@ use alloc::{vec, vec::Vec};
 
 #[derive(new, Debug)]
 /// Links a [NodeId] to its autodiff graph [NodeRef]
-pub(crate) struct NodeTree {
-    map: HashMap<NodeId, Vec<NodeId>>,
+pub struct NodeTree {
+    /// The map from node id to parent node ids
+    pub map: HashMap<NodeId, Vec<NodeId>>,
 }
 
 impl NodeTree {
     /// Gives the parents of the node in the autodiff graph
-    pub(crate) fn parents(&self, node_id: &NodeId) -> Option<Vec<NodeId>> {
+    pub fn parents(&self, node_id: &NodeId) -> Option<Vec<NodeId>> {
         self.map.get(node_id).cloned()
     }
 }
